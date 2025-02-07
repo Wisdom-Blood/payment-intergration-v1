@@ -255,6 +255,7 @@ export default function PaymentFormCreator() {
       })
       return
     }
+    console.log(validatePaymentForm())
 
     if (!validatePaymentForm()) {
       return
@@ -635,8 +636,11 @@ export default function PaymentFormCreator() {
                       value={guestName}
                       onChange={(e) => setGuestName(e.target.value)}
                       placeholder="Enter name as shown on card"
-                      className="h-12"
+                      className={cn("h-12", errors.cardName && "border-red-500")}
                     />
+                    {errors.cardName && (
+                      <p className="text-sm text-red-500 mt-1">{errors.cardName}</p>
+                    )}
                   </div>
 
                   <div className="space-y-2">
@@ -647,10 +651,13 @@ export default function PaymentFormCreator() {
                         value={cardNumber}
                         onChange={handleCardNumberChange}
                         placeholder="1234 5678 9012 3456"
-                        className="h-12 pl-12"
+                        className={cn("h-12 pl-12", errors.cardNumber && "border-red-500")}
                       />
                       <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
                     </div>
+                    {errors.cardNumber && (
+                      <p className="text-sm text-red-500 mt-1">{errors.cardNumber}</p>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
@@ -661,8 +668,11 @@ export default function PaymentFormCreator() {
                         value={expiryDate}
                         onChange={handleExpiryDateChange}
                         placeholder="MM/YY"
-                        className="h-12"
+                        className={cn("h-12", errors.expiryDate && "border-red-500")}
                       />
+                      {errors.expiryDate && (
+                        <p className="text-sm text-red-500 mt-1">{errors.expiryDate}</p>
+                      )}
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="cvc" className="text-indigo-950">CVC</Label>
@@ -670,10 +680,13 @@ export default function PaymentFormCreator() {
                         id="cvc"
                         value={cvc}
                         onChange={handleCVCChange}
-                        placeholder="123"
+                        placeholder={getCVCPlaceholder(cardType)}
                         type="password"
-                        className="h-12"
+                        className={cn("h-12", errors.cvc && "border-red-500")}
                       />
+                      {errors.cvc && (
+                        <p className="text-sm text-red-500 mt-1">{errors.cvc}</p>
+                      )}
                     </div>
                   </div>
                 </motion.div>
