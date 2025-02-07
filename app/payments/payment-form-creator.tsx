@@ -194,37 +194,38 @@ export default function PaymentFormCreator() {
       cvc: ""
     }
 
+    let hasErrors = false
+
     // Amount validation
     const total = calculateTotal()
     const amountValidation = validateAmount(total.toString())
     if (!amountValidation.isValid) {
       newErrors.amount = amountValidation.message
-      toast({
-        title: "Invalid Amount",
-        description: amountValidation.message,
-        variant: "destructive"
-      })
-      return false
+      hasErrors = true
     }
 
     // Card name validation
     if (!validateCardName(guestName)) {
       newErrors.cardName = "Please enter a valid name (letters and spaces only)"
+      hasErrors = true
     }
 
     // Card number validation
     if (!validateCardNumber(cardNumber)) {
       newErrors.cardNumber = "Invalid card number"
+      hasErrors = true
     }
 
     // Card type validation
     if (!cardType) {
       newErrors.cardNumber = "Unsupported card type"
+      hasErrors = true
     }
 
     // Expiry date validation
     if (!validateExpiryDate(expiryDate)) {
       newErrors.expiryDate = "Invalid expiry date"
+      hasErrors = true
     } else {
       // Additional expiry validation
       const [month, year] = expiryDate.split('/')
@@ -233,16 +234,29 @@ export default function PaymentFormCreator() {
       
       if (expiry < today) {
         newErrors.expiryDate = "Card has expired"
+        hasErrors = true
       }
     }
 
     // CVC validation
     if (!validateCVC(cvc, cardType)) {
       newErrors.cvc = `Invalid CVC (${getCVCLength(cardType)} digits required)`
+      hasErrors = true
     }
 
     setErrors(newErrors)
-    return !Object.values(newErrors).some(error => error !== "")
+
+    // Show toast only if there are validation errors
+    if (hasErrors) {
+      toast({
+        title: "Validation Error",
+        description: "Please check the form for errors",
+        variant: "destructive"
+      })
+      return false
+    }
+
+    return true
   }
 
   const handlePayment = async () => {
